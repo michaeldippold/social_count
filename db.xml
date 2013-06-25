@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<schema version="0.3">
+	<table name="btSocialCount">
+		<field name="bID" type="I">
+			<key />
+			<unsigned />
+		</field>
+		<field name="content" type="X2">
+			<default value="" />
+		</field>
+		<field name="twitter_count" type="I" size="6">
+			<default value="0" />
+		</field>
+		<field name="facebook_count" type="I" size="6">
+			<default value="0" />
+		</field>
+		<field name="timelineCacheTTL" type="I">
+        	<unsigned />
+       		<default value="300" />
+    	</field>
+	</table>
+</schema>
