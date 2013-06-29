@@ -36,54 +36,54 @@ class SocialCountBlockController extends BlockController {
 *
 * These methods receive the social count data, cache it, and display it.
 * Consider either error handling (return 0 if no response) or forced suppression with @file_get_contents: 
-* http://stackoverflow.com/questions/272361/how-can-i-handle-the-warning-of-file-get-contents-function-in-php
+* http://stackoverflow.com/questions/777361/how-can-i-handle-the-warning-of-file-get-contents-function-in-php
 */
 
-	public function getTweetCount() {
+	public function getTweetCount($call_bID) {
 
-		$tweetcount = $this->get_TwitterCount($this->getCurrentUrl());
-      	$tweet_count = Cache::get('social_counts', $this->getCacheKey("twitter"));
+		$tweetcount = $this->get_TwitterCount();
+      	$tweet_count = Cache::get('social_counts', "twitter".$call_bID);
 
 	    if( empty($tweet_count) ) {
-	      	Cache::set('social_counts', $this->getCacheKey("twitter"), $tweetcount, $this->socialCacheTTL());
-	    	$tweet_count = Cache::get('social_counts', $this->getCacheKey("twitter"));
+	      	Cache::set('social_counts', "twitter".$call_bID, $tweetcount, $this->socialCacheTTL());
+	    	$tweet_count = Cache::get('social_counts', "twitter".$call_bID);
 	    } 
 
 	    return $tweet_count ;
     }
 
-    public function getLikeCount() {
+    public function getLikeCount($call_bID) {
 
-		$likecount = $this->get_FacebookCount($this->getCurrentUrl());
-      	$like_count = Cache::get('social_counts', $this->getCacheKey("facebook"));
+		$likecount = $this->get_FacebookCount();
+      	$like_count = Cache::get('social_counts', "facebook".$call_bID);
 
 	      if( empty($like_count) ) {
-	      	Cache::set('social_counts', $this->getCacheKey("facebook"), $likecount, $this->socialCacheTTL());
-	      	$like_count = Cache::get('social_counts', $this->getCacheKey("facebook"));
+	      	Cache::set('social_counts', "facebook".$call_bID, $likecount, $this->socialCacheTTL());
+	      	$like_count = Cache::get('social_counts', "facebook".$call_bID);
 	      } 
 	    return $like_count ;
     }
 
-    public function getPlusOnes() {
+    public function getPlusOnes($call_bID) {
 
 		$plusones = $this->get_PlusOnes();
-      	$plues_ones = Cache::get('social_counts', $this->getCacheKey("googleplus"));
+      	$plues_ones = Cache::get('social_counts', "plusones".$call_bID);
 
 	      if( empty($plus_ones) ) {
-	      	Cache::set('social_counts', $this->getCacheKey("googleplus"), $plusones, $this->socialCacheTTL());
-	      	$plus_ones = Cache::get('social_counts', $this->getCacheKey("googleplus"));
+	      	Cache::set('social_counts', "plusones".$call_bID, $plusones, $this->socialCacheTTL());
+	      	$plus_ones = Cache::get('social_counts', "plusones".$call_bID);
 	      } 
 	    return $plus_ones ;
     }
 
-    public function getPins() {
+    public function getPins($call_bID) {
 
 		$pins = $this->get_pinterest();
-      	$pinterest_count = Cache::get('social_counts', $this->getCacheKey("pinterest"));
+      	$pinterest_count = Cache::get('social_counts', "pinterest".$call_bID);
 
 	      if( empty($pinterest_count) ) {
-	      	Cache::set('social_counts', $this->getCacheKey("pinterest"), $pins, $this->socialCacheTTL());
-	      	$pinterest_count = Cache::get('social_counts', $this->getCacheKey("pinterest"));
+	      	Cache::set('social_counts', "pinterest".$call_bID, $pins, $this->socialCacheTTL());
+	      	$pinterest_count = Cache::get('social_counts', "pinterest".$call_bID);
 	      } 
 	    return $pinterest_count ;
     }
@@ -94,17 +94,17 @@ class SocialCountBlockController extends BlockController {
 *
 */
 
-    public function get_TwitterCount($url) {
+    public function get_TwitterCount() {
 
-		$json_string = file_get_contents('http://urls.api.twitter.com/1/urls/count.json?url=' . $url);
+		$json_string = file_get_contents('http://urls.api.twitter.com/1/urls/count.json?url=' . $this->getCurrentUrl());
 	    $json = json_decode($json_string, true);
 	 
 	    return intval( $json['count'] );
 	}
 
-	public function get_FacebookCount($url) {
+	public function get_FacebookCount() {
 
-		$json_string = file_get_contents('http://graph.facebook.com/?ids=' . $url);
+		$json_string = file_get_contents('http://graph.facebook.com/?ids=' . $this->getCurrentUrl());
 	    $json = json_decode($json_string, true);
 	 
 	    return intval( $json[$url]['shares'] );
@@ -118,7 +118,7 @@ class SocialCountBlockController extends BlockController {
 		curl_setopt($curl, CURLOPT_URL, "https://clients6.google.com/rpc");
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"'.rawurldecode("{$this->getCurrentUrl()}").'","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]');
+		curl_setopt($curl, CURLOPT_POSTFIELDS, '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"'.rawurldecode("{$this->getCurrentUrl()}").'","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"7.0","key":"p","apiVersion":"v1"}]');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
 		$curl_results = curl_exec ($curl);
@@ -157,14 +157,14 @@ class SocialCountBlockController extends BlockController {
 		return $cont;
 	}
 
-	public function total_all_counts() {
-		$output = 0
-		+ $this->getTweetCount()
-		+ $this->getLikeCount()
-		+ $this->getPlusOnes()
-		+ $this->getPins();
-		return $output;
-	}
+	//public function total_all_counts() {
+	//	$output = 0
+	//	+ $this->getTweetCount()
+	//	+ $this->getLikeCount()
+	//		+ $this->getPlusOnes()
+	//	+ $this->getPins();
+	//	return $output;
+	//}
 
 
 /**
@@ -191,6 +191,37 @@ class SocialCountBlockController extends BlockController {
    		$nh = Loader::helper('navigation');
   		$cpl = $nh->getCollectionURL($c);
   		return $cpl;
+	}
+
+/*
+*
+* Functions that query the DB and output a 1/0 for displaying social media modules
+*
+*/
+
+	function twitter_check($ID) {
+		$db = loader::db();
+		$records = $db->GetAll("select * from btSocialCount where bID ='". mysql_real_escape_string( $ID ) ."'");
+
+		return $records['0']['Twitter'];
+	}
+	function facebook_check($ID) {
+		$db = loader::db();
+		$records = $db->GetAll("select * from btSocialCount where bID ='". mysql_real_escape_string( $ID ) ."'");
+
+		return $records['0']['Facebook'];
+	}
+	function google_check($ID) {
+		$db = loader::db();
+		$records = $db->GetAll("select * from btSocialCount where bID ='". mysql_real_escape_string( $ID ) ."'");
+
+		return $records['0']['Google'];
+	}
+	function pinterest_check($ID) {
+		$db = loader::db();
+		$records = $db->GetAll("select * from btSocialCount where bID ='". mysql_real_escape_string( $ID ) ."'");
+
+		return $records['0']['Pinterest'];
 	}
 
 

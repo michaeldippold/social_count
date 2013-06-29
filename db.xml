@@ -5,18 +5,13 @@
 			<key />
 			<unsigned />
 		</field>
-		<field name="content" type="X2">
-			<default value="" />
-		</field>
-		<field name="twitter_count" type="I" size="6">
-			<default value="0" />
-		</field>
-		<field name="facebook_count" type="I" size="6">
-			<default value="0" />
-		</field>
-		<field name="timelineCacheTTL" type="I">
-        	<unsigned />
-       		<default value="300" />
+    	<field name="Twitter" type="I1">
+    	</field>
+    	<field name="Pinterest" type="I1">
+    	</field>
+    	<field name="Facebook" type="I1">
+    	</field>
+    	<field name="Google" type="I1">
     	</field>
 	</table>
 </schema>

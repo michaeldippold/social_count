@@ -3,9 +3,12 @@
 
 	<!-- THIS IS WHERE YOU CAN EDIT WHAT POPS UP IN THE EDIT BOX -->
 	<div class="alert-message block-message info">
-		<?php echo t("Don't add anything to the form below.") ?>
+		<?php echo t("Select which social media to include.") ?>
 	</div>
 
-	<?php echo $form->label('content', t('Name')) ?>
-	<?php echo $form->text('content', $content) ?>
+<?php include('select_form.php'); ?>
+
 </div>
+
+
+
