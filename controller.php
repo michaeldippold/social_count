@@ -39,53 +39,68 @@ class SocialCountBlockController extends BlockController {
 * http://stackoverflow.com/questions/777361/how-can-i-handle-the-warning-of-file-get-contents-function-in-php
 */
 
-	public function getTweetCount($call_bID) {
+	public function getTweetCount($key) {
 
 		$tweetcount = $this->get_TwitterCount();
-      	$tweet_count = Cache::get('social_counts', "twitter".$call_bID);
+      	$tweet_count = Cache::get('social_counts', "twitter".$key);
 
 	    if( empty($tweet_count) ) {
-	      	Cache::set('social_counts', "twitter".$call_bID, $tweetcount, $this->socialCacheTTL());
-	    	$tweet_count = Cache::get('social_counts', "twitter".$call_bID);
+	      	Cache::set('social_counts', "twitter".$key, $tweetcount, $this->socialCacheTTL());
+	    	$tweet_count = Cache::get('social_counts', "twitter".$key);
 	    } 
-
-	    return $tweet_count ;
+		if (isset($tweet_count)) {
+	    	return $tweet_count ;
+		} else {
+			return 0;
+		}
     }
 
-    public function getLikeCount($call_bID) {
+    public function getLikeCount($key) {
 
 		$likecount = $this->get_FacebookCount();
-      	$like_count = Cache::get('social_counts', "facebook".$call_bID);
+      	$like_count = Cache::get('social_counts', "facebook".$key);
 
 	      if( empty($like_count) ) {
-	      	Cache::set('social_counts', "facebook".$call_bID, $likecount, $this->socialCacheTTL());
-	      	$like_count = Cache::get('social_counts', "facebook".$call_bID);
+	      	Cache::set('social_counts', "facebook".$key, $likecount, $this->socialCacheTTL());
+	      	$like_count = Cache::get('social_counts', "facebook".$key);
 	      } 
-	    return $like_count ;
+		if (isset($like_count)) {
+	    	return $like_count ;
+		} else {
+			return 0;
+		}
     }
 
-    public function getPlusOnes($call_bID) {
+    public function getPlusOnes($key) {
 
 		$plusones = $this->get_PlusOnes();
-      	$plues_ones = Cache::get('social_counts', "plusones".$call_bID);
+      	$plues_ones = Cache::get('social_counts', "plusones".$key);
 
 	      if( empty($plus_ones) ) {
-	      	Cache::set('social_counts', "plusones".$call_bID, $plusones, $this->socialCacheTTL());
-	      	$plus_ones = Cache::get('social_counts', "plusones".$call_bID);
+	      	Cache::set('social_counts', "plusones".$key, $plusones, $this->socialCacheTTL());
+	      	$plus_ones = Cache::get('social_counts', "plusones".$key);
 	      } 
-	    return $plus_ones ;
+		if (isset($plus_ones)) {
+	    	return $plus_ones ;
+		} else {
+			return 0;
+		}
     }
 
-    public function getPins($call_bID) {
+    public function getPins($key) {
 
 		$pins = $this->get_pinterest();
-      	$pinterest_count = Cache::get('social_counts', "pinterest".$call_bID);
+      	$pinterest_count = Cache::get('social_counts', "pinterest".$key);
 
 	      if( empty($pinterest_count) ) {
-	      	Cache::set('social_counts', "pinterest".$call_bID, $pins, $this->socialCacheTTL());
-	      	$pinterest_count = Cache::get('social_counts', "pinterest".$call_bID);
+	      	Cache::set('social_counts', "pinterest".$key, $pins, $this->socialCacheTTL());
+	      	$pinterest_count = Cache::get('social_counts', "pinterest".$key);
 	      } 
-	    return $pinterest_count ;
+		if (isset($pinterest_count)) {
+	    	return $pinterest_count ;
+		} else {
+			return 0;
+		}
     }
 
 /**
@@ -107,7 +122,7 @@ class SocialCountBlockController extends BlockController {
 		$json_string = file_get_contents('http://graph.facebook.com/?ids=' . $this->getCurrentUrl());
 	    $json = json_decode($json_string, true);
 	 
-	    return intval( $json[$url]['shares'] );
+	    return intval( $json[$this->getCurrentUrl()]['shares'] );
 	}
 
 	public function get_PlusOnes()  {
@@ -193,7 +208,7 @@ class SocialCountBlockController extends BlockController {
   		return $cpl;
 	}
 
-/*
+/**
 *
 * Functions that query the DB and output a 1/0 for displaying social media modules
 *

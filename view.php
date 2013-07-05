@@ -22,21 +22,30 @@
 <div class="count-wrap">
   <p class="total">
     <?php 
-      $page = Page::getCurrentPage();      
-      echo  
-      (
-      $counts->getPlusOnes($page->getCollectionID()) + 
-      $counts->getTweetCount($page->getCollectionID()) + 
-      $counts->getPins($page->getCollectionID()) +  
-      $counts->getLikeCount($page->getCollectionID())
-      );
+
+      $page = Page::getCurrentPage();  
+      $total_shares = 0; 
+
+        if ($counts->twitter_check($bID) == 1) {
+          $total_shares += $counts->getTweetCount($page->getCollectionID());
+        } 
+        if ($counts->pinterest_check($bID) == 1) {
+          $total_shares +=$counts->getPins($page->getCollectionID());
+        } 
+        if ($counts->facebook_check($bID) == 1) {
+          $total_shares +=$counts->getLikeCount($page->getCollectionID());
+        } 
+        if ($counts->google_check($bID) == 1) {
+          $total_shares += $counts->getPlusOnes($page->getCollectionID());
+        } 
+
+      echo ($total_shares);
     ?>
   </p>
   <p class="shares">
     shares
   </p>
 </div>
-
 </div>
 
 
